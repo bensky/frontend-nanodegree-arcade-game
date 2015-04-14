@@ -1,11 +1,13 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(home_row) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.x = -101;
+    this.y = (home_row * 83) - 20;
 }
 
 // Update the enemy's position, required method for game
@@ -14,6 +16,10 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    numCols = 5;
+    this.x++;
+    if(this.x >= (numCols+1)*101)
+        this.x = -101;
 }
 
 // Draw the enemy on the screen, required method for game
@@ -24,11 +30,61 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var Player = function(start_col,start_row){
+    this.sprite = 'images/char-boy.png';
+    this.col = start_col;
+    this.row = start_row;
+    this.x = this.col * 101;
+    this.y = this.row * 83;
+}
+
+Player.prototype.update = function(dt){
+}
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.handleInput = function(input) {
+    switch(input) {
+        case 'left':
+            if(this.col>0) {
+                this.col--;
+            }
+            break;
+        case 'right':
+            if(this.col<4) {
+                this.col++;
+            }
+            break; 
+        case 'up':
+            if(this.row>0) {
+                this.row--;
+            }
+            break;    
+        case 'down':
+            if(this.row<5) {
+                this.row++;
+            }
+            break;    
+        default:
+            break;
+    }
+    this.x = this.col * 101;
+    this.y = this.row * 83;   
+}
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var bug1 = new Enemy("1");
+var bug2 = new Enemy("2");
+var bug3 = new Enemy("3");
+
+var allEnemies = [bug1,bug2,bug3];
+
+var player = new Player(2,5)
 
 
 
