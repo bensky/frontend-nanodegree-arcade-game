@@ -29,8 +29,14 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+
+    // Set the number of colums - should be set globally
     numCols = 5;
-    this.x = this.x + this.speed;
+
+    //Tweak the speed based on the dt parameter
+    adjusted_speed = this.speed * 60 * dt;
+    // Set the new bug position based on speed
+    this.x = this.x + adjusted_speed;
     //If the bug has reached the edge, then wrap it and pick a new row
     if(this.x >= (numCols+1)*101) {
         this.x = -101;
