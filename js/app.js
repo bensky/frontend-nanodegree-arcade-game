@@ -6,6 +6,14 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+
+    this.top_offset = 76; //Offset of bug from top of sprite is 62 pixels
+    this.left_offset = 3; //Offset from the left
+    this.right_offset = 2; //Offset from right
+    this.bottom_offset = 28; //Offset from bottom
+    this.ht = 64;
+    this.wd = 95;
+
     //Start the bug all the way to the left
     this.x = -101;
     //Pick a random row
@@ -36,11 +44,50 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// Draw the enemy on the screen, required method for game
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+
+var inside = function(xpt,ypt,corners) {
+    if((xpt >= corners[0]) &&
+        (xpt <= corners[2]) &&
+        (ypt >= corners[1]) &&
+        (ypt <= corners[3]))
+        return(true);
+    else
+        return(false);
+}
+
+Enemy.prototype.collision = function(corners) {
+    //Check each bug corner point and see if it is inside the player corners
+    if(inside((this.x + this.left_offset),(this.y + this.top_offset), corners))
+        return(true);
+    else if(inside((this.x + this.left_offset + this.wd), (this.y + this.top_offset), corners))
+        return(true);
+    else if(inside((this.x + this.left_offset), (this.y + this.top_offset + this.ht), corners))
+        return(true);
+    else if(inside((this.x + this.left_offset + this.wd), (this.y + this.top_offset + this.ht), corners))
+        return(true);
+    else return(false);
+}
+
+
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function(start_col,start_row){
     this.sprite = 'images/char-boy.png';
+
+    this.top_offset = 62; //Offset of boys head from top of sprite is 62 pixels
+    this.left_offset = 17; //Offset from the left
+    this.right_offset = 16; //Offset from right
+    this.bottom_offset = 32; //Offset from bottom
+    this.ht = 75;
+    this.wd = 64;
+
     this.col = start_col;
     this.row = start_row;
     this.x = this.col * 101;
@@ -52,6 +99,13 @@ Player.prototype.update = function(dt){
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.reset = function() {
+    this.col = 2;
+    this.row = 5;
+    this.x = this.col * 101;
+    this.y = (this.row * 83) - 20;    
 }
 
 Player.prototype.handleInput = function(input) {

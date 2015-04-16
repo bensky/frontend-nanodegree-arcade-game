@@ -14,7 +14,6 @@
  * a little simpler to work with.
  */
 
-/* Delete this */
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -82,7 +81,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -97,6 +96,18 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            var corners = [(player.x + player.left_offset), (player.y + player.top_offset),
+                           (player.x + player.left_offset + player.wd), (player.y + player.top_offset + player.ht)];
+            if(enemy.collision(corners)) {
+                alert("Ouch");
+                reset();                
+                return;
+            } 
+        });
     }
 
     /* This function initially draws the "game level", it will then call
@@ -162,7 +173,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.reset();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
