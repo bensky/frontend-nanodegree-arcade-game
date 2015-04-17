@@ -15,6 +15,8 @@
  */
 
 
+
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -28,7 +30,10 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+    var gmSpace = document.getElementById('gameArea');
+    var theFirstChild = gmSpace.firstChild;
+    gmSpace.insertBefore(canvas,theFirstChild);
+
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -58,6 +63,16 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
+        /* If player won the game, let's play win sound */
+        if(game.win) {
+            var snd = new Audio('sounds/win.mp3'); // buffers automatically when created
+            snd.play();
+            game.win = false;
+            setTimeout(function() {
+                var r = confirm("Play again?");
+                if (r == true) reset(); 
+            }, 2000);            
+        }
     };
 
     /* This function does some initial setup that should only occur once,
@@ -103,8 +118,9 @@ var Engine = (function(global) {
             var corners = [(player.x + player.left_offset), (player.y + player.top_offset),
                            (player.x + player.left_offset + player.wd), (player.y + player.top_offset + player.ht)];
             if(enemy.collision(corners)) {
-                alert("Ouch");
-                reset();                
+                reset();     
+                var snd = new Audio('sounds/die.wav'); // buffers automatically when created
+                snd.play();
                 return;
             } 
         });
@@ -185,7 +201,7 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-pink-girl.png'
     ]);
     Resources.onReady(init);
 
