@@ -9,10 +9,11 @@ var game = {
     playerStartCol : 2,
     playerStartRow: 5,
     timesAcross: 0,
-    winTimes: 3
+    winTimes: 5,
+    score: 0
 };
 
-// Enemies our player must avoid
+// Enemies our player must avoid AKA bugs
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -21,7 +22,7 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
 
-    //Let's define the corners of our bug image inside the sprite for later use in dteecting collisions
+    //Let's define the corners of our bug image inside the sprite for later use in detecting collisions
     
     this.top_offset = 76;       //Offset of bug from top of sprite is 62 pixels
     this.left_offset = 3;       //Offset from the left
@@ -37,6 +38,7 @@ var Enemy = function() {
     this.y = (home_row * 83) - 20;
     //Pick a random speed between 1 and 5
     //TO DO: Make more speeds as the player progresses
+    //TO DO: Have a direction factor so that bugs can come from either side of the screen
     this.speed = Math.floor((Math.random() * 5) + 1);
 }
 
@@ -78,9 +80,9 @@ var inside = function(xpt,ypt,corners) {
         return(false);
 }
 
-var updateTimesDisplay = function() {
-    var times = document.getElementById('timesArea');
+var updateDisplay = function() {
  
+    var times = document.getElementById('timesArea');
     var someText = "You've gone across " + game.timesAcross;   
     if(game.timesAcross == 1) {
         someText = someText + " time!";
@@ -96,6 +98,19 @@ var updateTimesDisplay = function() {
         times.appendChild(para);        
     } else {
         textLine.replaceChild(timesText, textLine.childNodes[0]);
+    }
+
+    var scoreArea = document.getElementById('scoreArea');
+    var theScore = game.score;   
+    var scoreText = document.createTextNode(theScore);
+    var scoreLine = scoreArea.childNodes[0];
+
+    if(scoreLine == null) {
+        var para2 = document.createElement("p");
+        para2.appendChild(scoreText);
+        scoreArea.appendChild(para2);        
+    } else {
+        scoreLine.replaceChild(scoreText, scoreLine.childNodes[0]);
     }
 }
 
@@ -183,29 +198,40 @@ Player.prototype.handleInput = function(input) {
         case 'up':
             if(this.row >= 0) {
                 this.row--;
+                //Increment the score using our sophisticated formula
+                game.score = game.score + (10*(1+game.timesAcross));                
             }
             break;    
         case 'down':
             if(this.row < 5) {
                 this.row++;
+                //You lose score if you go the wrong way
+                game.score = game.score - (10*(1+game.timesAcross));
             }
             break;    
         default:
             break;
     }
+
+    // Update the display
+
+    updateDisplay();
     //If the player got to the end, then increment the times across and make another bug
     // Move the player back to the start. 
     // If we make it across five times, you win
     if(this.row < 0) {
         game.timesAcross++;
+        // Update the display
+        updateDisplay();        
+
         if(game.timesAcross == game.winTimes) {
-            // If we win, don't need to move so just return.
             game.win = true;
             doWin();
+            // If we win, don't need to move so just return.            
             return;
         }
         addBug();       
-        updateTimesDisplay();            
+           
         // Put the player back to the start
         this.reset();
       
@@ -229,7 +255,8 @@ function reset() {
     player.reset();
     resetBugs();
     game.timesAcross = 0;
-    updateTimesDisplay();
+    game.score = 0;
+    updateDisplay();
 }
 
 

@@ -12,3 +12,9 @@ div#textArea {
 div#gameArea {
     text-align: center;
 }
+
+div#scoreArea {
+	font-weight: bold;
+	font-size: 150%;
+	margin: 10px;
+}
