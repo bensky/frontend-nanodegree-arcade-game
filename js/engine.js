@@ -62,17 +62,7 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
-        /* If player won the game, let's play win sound */
-        if(game.win) {
-            var snd = new Audio('sounds/win.mp3'); // buffers automatically when created
-            snd.play();
-            game.win = false;
-            setTimeout(function() {
-                var r = confirm("Play again?");
-                if (r == true) reset(); 
-            }, 2000);            
-        }
+        win.requestAnimationFrame(main);       
     };
 
     /* This function does some initial setup that should only occur once,
@@ -112,6 +102,11 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+
+
+
+
 
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
@@ -190,6 +185,9 @@ var Engine = (function(global) {
      */
     function reset() {
         player.reset();
+        resetBugs();
+        game.timesAcross = 0;
+        updateTimesDisplay();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
